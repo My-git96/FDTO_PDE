@@ -1,0 +1,12 @@
+.vscode
+Extract_mesh/__pycache__
+dataset/__pycache__
+FVMmodel/__pycache__
+Logger/
+utils/__pycache__
+models/__pycache__
+__pycache__
+Comsol_ref
+FDTO-result/
+nohup.out
+.devcontainer
