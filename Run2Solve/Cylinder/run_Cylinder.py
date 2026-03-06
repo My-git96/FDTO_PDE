@@ -10,7 +10,7 @@ import get_param
 import time
 from get_param import get_hyperparam
 from utils.Logger import Logger
-from SOAPopt import SOAP
+from utils.SOAPopt import SOAP
 from utils.scheduler import ProgressiveRestartCosineAnnealingLR
 from utils.utilities import NodeType
 
