@@ -269,8 +269,6 @@ for epoch in range(n_epochs):
         print(row_format.format(*values))
 
     if epoch % 10 == 0 or epoch == n_epochs - 1:
-            
         global_idx = graph_node.global_idx.cpu()
         batch = graph_node.batch.cpu()
-        datasets.payback_for_vis(uvp_to_vis.detach().cpu(), global_idx,params.dataset_size,batch)
-
+        datasets.payback_uvp_for_vis(uvp_to_vis.detach().cpu(), global_idx, params.dataset_size, batch, physical_time=epoch, time_step=epoch)

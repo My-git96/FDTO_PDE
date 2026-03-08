@@ -1394,7 +1394,7 @@ if __name__ == "__main__":
 
     path = {
             "simulator": "???",
-            "gird_path": "grid_example/Cavity301",
+            "gird_path": "grid_example/Cavity201",
             "mesh_only": True,
         }
 

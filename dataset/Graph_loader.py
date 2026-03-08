@@ -175,14 +175,11 @@ class Data_Pool:
 
         for i in range(num_graph):
 
-            sample_mask = torch.where(batch==i)[0]
-            #sample_mask = global_idx
-            #uvp_err = torch.cat([self.uvp_node_pool[sample_mask, 0:3], err.unsqueeze(1)], dim=1)
-            uvp_err = q.data[sample_mask,0:5]
+            sample_mask = global_idx
             mesh = self.meta_pool[i]
             export_uvp_to_tecplot(
                 mesh=mesh,
-                uvp_err=uvp_err,
+                uvp=q.data[:,0:3],
                 datalocation="node",
                 physical_time=physical_time,
                 time_step=time_step,

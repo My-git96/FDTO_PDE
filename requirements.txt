@@ -1,0 +1,18 @@
+# Core scientific / ML dependencies
+numpy==2.2.5
+scipy==1.17.1
+h5py==3.15.1
+networkx==3.4.2
+
+# PyTorch (CUDA 12.8)
+# Install with: pip install -r requirements.txt --extra-index-url https://download.pytorch.org/whl/cu128
+torch==2.7.0+cu128
+torchvision==0.22.0+cu128
+torchaudio==2.7.0+cu128
+
+# PyTorch Geometric and sparse extensions
+# Install scatter/cluster with:
+#   pip install torch-scatter torch-cluster -f https://data.pyg.org/whl/torch-2.7.0+cu128.html
+torch-geometric==2.7.0
+torch_scatter==2.1.2
+torch_cluster==1.6.3

@@ -163,7 +163,7 @@ def write_uvp_tecplotzone(
 
     with open(filename, "w") as f:
         f.write('TITLE = "FDTO solution"\n')
-        f.write('VARIABLES = "X"\n"Y"\n"U"\n"V"\n"P"\n"UV_ERR"\n"P_ERR"\n')
+        f.write('VARIABLES = "X"\n"Y"\n"U"\n"V"\n"P"\n')
         f.write('DATASETAUXDATA Common.Incompressible="TRUE"\n')
         f.write('DATASETAUXDATA Common.VectorVarsAreVelocity="TRUE"\n')
         f.write(f'DATASETAUXDATA Common.Viscosity="{mu}"\n')
@@ -171,8 +171,6 @@ def write_uvp_tecplotzone(
         f.write(f'DATASETAUXDATA Common.UVar="3"\n')
         f.write(f'DATASETAUXDATA Common.VVar="4"\n')
         f.write(f'DATASETAUXDATA Common.PressureVar="5"\n')
-        f.write(f'DATASETAUXDATA Common.UV_ERRVar="6"\n')
-        f.write(f'DATASETAUXDATA Common.P_ERRVar="7"\n')
 
         for i in range(time_step_length):
             for zone in datasets:
@@ -186,19 +184,7 @@ def write_uvp_tecplotzone(
                     V = zone["velocity"][i, :, 1]
                     P = zone["pressure"][i, :, 0]
 
-                    # Handle UV_ERR - extract the magnitude or first component
-                    if "uv_error" in zone and zone["uv_error"].shape[2] >= 1:
-                        UV_ERR = zone["uv_error"][i, :, 0]
-                    else:
-                        UV_ERR = np.zeros_like(X)
-                    
-                    # Handle P_ERR - extract pressure error
-                    if "p_error" in zone and zone["p_error"].shape[2] >= 1:
-                        P_ERR = zone["p_error"][i, :, 0]
-                    else:
-                        P_ERR = np.zeros_like(X)
-
-                    field = np.concatenate((X, Y, U, V, P, UV_ERR,P_ERR), axis=0)
+                    field = np.concatenate((X, Y, U, V, P), axis=0)
                     Cells = zone["cells"] + 1
                     Cells_index = zone["cells_index"]
                     face_node = zone["face_node"]
@@ -233,10 +219,10 @@ def write_uvp_tecplotzone(
                     f.write(" DATAPACKING=BLOCK\n")
                     data_packing_type = zone["data_packing_type"]
                     if data_packing_type == "cell":
-                        f.write(" VARLOCATION=([3,4,5,6,7]=CELLCENTERED)\n")
+                        f.write(" VARLOCATION=([3,4,5]=CELLCENTERED)\n")
                     elif data_packing_type == "node":
-                        f.write(" VARLOCATION=([3,4,5,6,7]=NODAL)\n")
-                    f.write(" DT=(SINGLE SINGLE SINGLE SINGLE SINGLE SINGLE SINGLE)\n")
+                        f.write(" VARLOCATION=([3,4,5]=NODAL)\n")
+                    f.write(" DT=(SINGLE SINGLE SINGLE SINGLE SINGLE)\n")
                     try:
                         print(f"start writing interior field data, size in {field.size},shape in {field.shape}")
                         write_array_to_file(field, f)
@@ -256,10 +242,7 @@ def write_uvp_tecplotzone(
                     U = zone["velocity"][i, :, 0]
                     V = zone["velocity"][i, :, 1]
                     P = zone["pressure"][i, :, 0]
-                    UV_ERR = zone["uv_error"][i, :, 0] if "uv_error" in zone else np.zeros_like(X)
-                    P_ERR = zone["p_error"][i, :, 0] if "p_error" in zone else np.zeros_like(X)
-
-                    field = np.concatenate((X, Y, U, V, P, UV_ERR,P_ERR), axis=0)
+                    field = np.concatenate((X, Y, U, V, P), axis=0)
                     faces = zone["face_node"]+ 1
                     f.write(" STRANDID=3, SOLUTIONTIME={0}\n".format(dt * i))
                     f.write(
@@ -271,10 +254,10 @@ def write_uvp_tecplotzone(
                     f.write('AUXDATA Common.IsBoundaryZone="TRUE"\n')
                     data_packing_type = zone["data_packing_type"]
                     if data_packing_type == "cell":
-                        f.write(" VARLOCATION=([3,4,5,6,7]=CELLCENTERED)\n")
+                        f.write(" VARLOCATION=([3,4,5]=CELLCENTERED)\n")
                     elif data_packing_type == "node":
-                        f.write(" VARLOCATION=([3,4,5,6,7]=NODAL)\n")
-                    f.write(" DT=(SINGLE SINGLE SINGLE SINGLE SINGLE SINGLE SINGLE)\n")
+                        f.write(" VARLOCATION=([3,4,5]=NODAL)\n")
+                    f.write(" DT=(SINGLE SINGLE SINGLE SINGLE SINGLE)\n")
                     
                     print("start writing boundary field data")
                     write_array_to_file(field, f)
@@ -297,7 +280,7 @@ def write_u_tecplotzone(
 
     with open(filename, "w") as f:
         f.write('TITLE = "FOGN solution"\n')
-        f.write('VARIABLES = "X"\n"Y"\n"U"\n"U_ERR"\n')
+        f.write('VARIABLES = "X"\n"Y"\n"U"\n')
         f.write('DATASETAUXDATA Common.Incompressible="TRUE"\n')
         f.write('DATASETAUXDATA Common.VectorVarsAreVelocity="TRUE"\n')
         f.write(f'DATASETAUXDATA Common.Viscosity="{mu}"\n')
@@ -378,7 +361,7 @@ def write_u_tecplotzone(
                     Y = zone["mesh_pos"][i, :, 1].astype(np.float32)
                     U = zone["velocity"][i, :, 0]
 
-                    field = np.concatenate((X, Y, U, U_ERR), axis=0)
+                    field = np.concatenate((X, Y, U), axis=0)
                     faces = zone["face_node"]+ 1
                     f.write(" STRANDID=3, SOLUTIONTIME={0}\n".format(dt * i))
                     f.write(
@@ -393,7 +376,7 @@ def write_u_tecplotzone(
                         f.write(" VARLOCATION=([3,4]=CELLCENTERED)\n")
                     elif data_packing_type == "node":
                         f.write(" VARLOCATION=([3,4]=NODAL)\n")
-                    f.write(" DT=(SINGLE SINGLE SINGLE SINGLE)\n")
+                    f.write(" DT=(SINGLE SINGLE SINGLE)\n")
 
                     print("start writing boundary field data")
                     write_array_to_file(field, f)

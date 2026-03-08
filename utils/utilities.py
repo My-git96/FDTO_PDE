@@ -644,7 +644,7 @@ def extract_cylinder_boundary_only_training(
 
     return boundary_zone
 
-def export_uvp_to_tecplot(mesh, uvp_err, datalocation="node", file_name=None, physical_time=None, time_step=None,
+def export_uvp_to_tecplot(mesh, uvp=None, datalocation="node", file_name=None, physical_time=None, time_step=None,
                 state_save_dir=None, device=None, plot_count=None,to_export = True):
         """
         导出uvp(node)数据到Tecplot DAT文件
@@ -663,14 +663,8 @@ def export_uvp_to_tecplot(mesh, uvp_err, datalocation="node", file_name=None, ph
                 interior_zone_numpy[k] = to_numpy(v)
             else:
                 interior_zone_numpy[k] = v   
-        uv_uns = uvp_err[:,0:2].unsqueeze(0).float()
-        p_uns = uvp_err[:,2:3].unsqueeze(0).float()
-        if uvp_err.shape[1] > 3:
-            uv_err = uvp_err[:,3:4].unsqueeze(0).float()
-            interior_zone_numpy["uv_error"] = uv_err.numpy()
-        if uvp_err.shape[1] > 4:
-            p_err = uvp_err[:,4:5].unsqueeze(0).float()
-            interior_zone_numpy["p_error"] = p_err.numpy()
+        uv_uns = uvp[:,0:2].unsqueeze(0).float()
+        p_uns = uvp[:,2:3].unsqueeze(0).float()
         interior_zone_numpy["velocity"] = uv_uns.numpy()
         interior_zone_numpy["pressure"] = p_uns.numpy()
         
@@ -704,12 +698,6 @@ def export_uvp_to_tecplot(mesh, uvp_err, datalocation="node", file_name=None, ph
                 if len(valid_boundary_indices) > 0:
                     boundary_zone_numpy["velocity"] = uv_uns[:, valid_boundary_indices, :].numpy()
                     boundary_zone_numpy["pressure"] = p_uns[:, valid_boundary_indices, :].numpy()
-                    if uvp_err.shape[1] > 3:
-                        uv_err = uvp_err[:,3:4].unsqueeze(0).float()
-                        boundary_zone_numpy["uv_error"] = uv_err[:, valid_boundary_indices, :].numpy()
-                    if uvp_err.shape[1] > 4:
-                        p_err = uvp_err[:,4:5].unsqueeze(0).float()
-                        boundary_zone_numpy["p_error"] = p_err[:, valid_boundary_indices, :].numpy()
                 else:
                     print("[WARNING] No valid boundary indices found in uvp_err")
             else:
@@ -717,12 +705,6 @@ def export_uvp_to_tecplot(mesh, uvp_err, datalocation="node", file_name=None, ph
                 if len(mask_node_boundary) > 0 and mask_node_boundary.max() < uvp_err.shape[0]:
                     boundary_zone_numpy["velocity"] = uv_uns[:, mask_node_boundary, :].numpy()
                     boundary_zone_numpy["pressure"] = p_uns[:, mask_node_boundary, :].numpy()
-                    if uvp_err.shape[1] > 3:
-                        uv_err = uvp_err[:,3:4].unsqueeze(0).float()
-                        boundary_zone_numpy["uv_error"] = uv_err[:, mask_node_boundary, :].numpy()
-                    if uvp_err.shape[1] > 4:
-                        p_err = uvp_err[:,4:5].unsqueeze(0).float()
-                        boundary_zone_numpy["p_error"] = p_err[:, mask_node_boundary, :].numpy()
                         
             boundary_zone_numpy["data_packing_type"] = ["node"]
             boundary_zone_numpy['zonename'] = 'BOUNDARY'
